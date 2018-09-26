@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>湯瑪士笑的你內心發寒</title>
+    <link rel="shortcut icon" href="http://i.imgur.com/jnjsKvZ.png">
+</head>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/84/three.min.js"></script>
+<script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
+<script src="https://rawgit.com/mrdoob/three.js/master/examples/js/loaders/MTLLoader.js"></script>
+<script src="https://rawgit.com/mrdoob/three.js/master/examples/js/loaders/OBJLoader.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js"></script>
+
+<style>
+	body {
+		overflow: hidden
+	}
+
+	#info {
+	  position: absolute;
+	  top: 0px;
+	  width: 100%;
+	  padding: 10px;
+	  text-align: center;
+	  color: #000000
+	}
+</style>
+
+<body>
+<script>
+	var renderer, camera, controls, scene;
+	var train = new THREE.Object3D();
+  var angle, flag=0, dis=0;
+
+	init();
+	animate();
+
+	function init() {
+
+    renderer = new THREE.WebGLRenderer({
+	  antialias: true
+  	});
+  	renderer.setSize(window.innerWidth, window.innerHeight);
+  	renderer.setClearColor(0x888888);
+
+  	camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 1000);
+  	camera.position.set(-20, 10, -100);  // important
+
+  	controls = new THREE.OrbitControls(camera, renderer.domElement);
+  	scene = new THREE.Scene();
+
+    document.body.appendChild(renderer.domElement);
+    window.addEventListener('resize', onWindowResize, false);
+
+		let axes = new THREE.AxisHelper(100);
+		//scene.add(axes);
+
+		var gridXZ = new THREE.GridHelper(200, 40, 'red', 'white');
+		//scene.add(gridXZ);
+
+		// skyBox
+	  var cubeMap = loadCubemap();
+	  scene.background = cubeMap;
+
+    //Line
+    var circle_right = makeCircle(60);
+    var circle_left = circle_right.clone();
+    circle_left.rotation.y = Math.PI;
+    circle_left.position.x = -40;
+
+    //scene.add(circle_right);
+    //scene.add(circle_left);
+
+    var line_top = makeLine();
+    var line_bottom = line_top.clone();
+    line_bottom.position.z = 120;
+
+    //scene.add(line_top);
+    //scene.add(line_bottom);
+
+    //Rail
+    var rail = makeRail();
+    rail.position.y = 0.5;
+    scene.add(rail);
+
+		// AmbientLight
+		var ambient = new THREE.AmbientLight(0x444444);
+		scene.add(ambient);
+		var directionalLight = new THREE.DirectionalLight(0xffffff);
+		directionalLight.position.set(0, 1, -1).normalize;
+		scene.add(directionalLight);
+
+		// model
+		var onProgress = function(xhr) {
+			if (xhr.lengthComputable) {
+				var percentComplete = xhr.loaded / xhr.total * 100;
+				console.log(Math.round(percentComplete, 2) + '% downloaded');
+			}
+		};
+		var onError = function(xhr) {};
+		var mtlLoader = new THREE.MTLLoader();
+		mtlLoader.setPath('model/HW0/');
+		mtlLoader.load('COMMON.mtl', function(materials) {
+			materials.preload();
+			var objLoader = new THREE.OBJLoader();
+			objLoader.setMaterials(materials);
+			objLoader.setPath('model/HW0/');
+			objLoader.load('COMMON.obj', function(object) {
+				train.add(unitize (object, 20));
+				scene.add(train);
+				//scene.add (new THREE.BoxHelper (Car));
+
+				object.traverse (
+					function(mesh) {
+						if (mesh instanceof THREE.Mesh) {
+							mesh.material.side = THREE.DoubleSide;
+						}
+				});
+			}, onProgress, onError);
+		});
+
+		// FPS
+		stats = new Stats();
+	  stats.domElement.style.position = 'absolute';
+	  stats.domElement.style.top = '0px';
+	  stats.domElement.style.left = '0px';
+	  stats.domElement.style.zIndex = 100;
+	  document.body.appendChild(stats.domElement);
+
+    angle = 0;
+	}
+
+	function animate() {
+		stats.update();
+		controls.update();
+    renderer.render (scene, camera);
+
+    if(flag === 0){
+    	angle = angle + 0.01;  // radian
+    	train.rotation.y = angle + Math.PI/2;
+      if(train.rotation.y>=2*Math.PI+Math.PI/2) angle=0;
+      train.position.set (60*Math.cos(angle)-dis, 1, -60*Math.sin(angle));
+      if(train.rotation.y%(2*Math.PI) >= Math.PI) flag=1;
+    }
+    //////////
+    if(flag === 1){
+      train.position.set (60*Math.cos(angle)-dis, 1, -60*Math.sin(angle));
+      dis += 0.6;
+      if(dis>= 40) flag = 2;
+    }
+      //////////////
+    if(flag === 2){
+    	angle += 0.01;  // radian
+    	train.rotation.y = angle + Math.PI/2;
+      train.position.set (60*Math.cos(angle)-dis, 1, -60*Math.sin(angle));
+      if(train.rotation.y>= 2*Math.PI) flag = 3;
+    }
+    //console.log(flag);
+    if(flag === 3){
+      	train.position.set (60*Math.cos(angle)-dis, 1, -60*Math.sin(angle));
+        dis -= 0.6;
+        if(dis <= 0){
+        	flag = 0;
+          dis = 0;
+        }
+    }
+    requestAnimationFrame (animate);
+	}
+
+  function loadCubemap() {
+	  var urls = [
+		  'texture/HW0/posx.jpg', 'texture/HW0/negx.jpg',
+		  'texture/HW0/posy.jpg', 'texture/HW0/negy.jpg',
+		  'texture/HW0/posz.jpg', 'texture/HW0/negz.jpg'
+	  ];
+	  var loader = new THREE.CubeTextureLoader();
+	  loader.setCrossOrigin('');
+	  var cubeMap = loader.load(urls);
+	  cubeMap.format = THREE.RGBFormat;
+	  return cubeMap;
+	}
+
+  function makeCircle(r) {
+  	let geometry = new THREE.Geometry();
+    let theta = Math.PI*2/100;
+    for (let i = 0; i <= 50; i++) {
+    	geometry.vertices.push (
+      	new THREE.Vector3(r*Math.sin(theta*i), 0, r*Math.cos(theta*i)));
+    }
+    return new THREE.Line (geometry, new THREE.LineBasicMaterial({color:0xffAA00}));
+  }
+
+  function makeLine() {
+    let geometry = new THREE.Geometry();
+    geometry.vertices.push(
+    	new THREE.Vector3( 0, 0, -60 ),
+    	new THREE.Vector3( -40, 0, -60 )
+    );
+    return new THREE.Line (geometry, new THREE.LineBasicMaterial({color:0xff0000}));
+  }
+
+  function makeRail(){
+    let All =  new THREE.Object3D();
+    let geometry = new THREE.BoxGeometry( 5, 1, 20 );
+    let loader = new THREE.TextureLoader();
+		loader.setCrossOrigin ('');
+		let texture = loader.load('texture/HW0/wood.jpg');
+    let material = new THREE.MeshBasicMaterial({map: texture});
+
+    let rail1 = new THREE.Mesh( geometry, material );
+    let rail2 = new THREE.Mesh( geometry, material );
+    let rail3 = new THREE.Mesh( geometry, material );
+    let rail4 = new THREE.Mesh( geometry, material );
+    let rail5 = new THREE.Mesh( geometry, material );
+    let rail6 = new THREE.Mesh( geometry, material );
+    let rail7 = new THREE.Mesh( geometry, material );
+    let rail8 = new THREE.Mesh( geometry, material );
+    let rail9 = new THREE.Mesh( geometry, material );
+    let rail10 = new THREE.Mesh( geometry, material );
+    let rail11 = new THREE.Mesh( geometry, material );
+    let rail12 = new THREE.Mesh( geometry, material );
+    let rail13 = new THREE.Mesh( geometry, material );
+    let rail14 = new THREE.Mesh( geometry, material );
+    let rail15 = new THREE.Mesh( geometry, material );
+    let rail16 = new THREE.Mesh( geometry, material );
+    let rail17 = new THREE.Mesh( geometry, material );
+    let rail18 = new THREE.Mesh( geometry, material );
+    let rail19 = new THREE.Mesh( geometry, material );
+    let rail20 = new THREE.Mesh( geometry, material );
+
+    //(x + 40)^2 + y^2 = 60^2
+    rail1.position.set(0, 0, -60);
+    rail2.position.set(20, 0, -56.57);
+    rail3.position.set(60*Math.cos(-Math.PI/4), 0, 60*Math.sin(-Math.PI/4));//
+    rail4.position.set(56.57, 0, -20);
+    rail5.position.set(60, 0, 0);
+    rail6.position.set(56.57, 0, 20);
+    rail7.position.set(60*Math.cos(Math.PI/4), 0, 60*Math.sin(Math.PI/4));//
+    rail8.position.set(20, 0, 56.57);
+    rail9.position.set(0, 0, 60);
+    rail10.position.set(-20, 0, 60);
+    rail11.position.set(-40, 0, 60);
+    rail12.position.set(-60, 0, 56.57);
+    rail13.position.set(-40-60*Math.cos(-Math.PI/4), 0, -60*Math.sin(-Math.PI/4));//
+    rail14.position.set(-96.57, 0, 20);
+    rail15.position.set(-100, 0, 0);
+    rail16.position.set(-96.57, 0, -20);
+    rail17.position.set(-40-60*Math.cos(Math.PI/4), 0, -60*Math.sin(Math.PI/4));//
+    rail18.position.set(-60, 0, -56.57);
+    rail19.position.set(-40, 0, -60);
+    rail20.position.set(-20, 0, -60);
+
+    rail2.rotation.y = -Math.PI/8;
+    rail3.rotation.y = -Math.PI/4;
+    rail4.rotation.y = Math.PI/2 - (-Math.PI/8);
+    rail5.rotation.y = -Math.PI/2;
+    rail6.rotation.y = Math.PI/2 - (Math.PI/8);
+    rail7.rotation.y = Math.PI/4;
+    rail8.rotation.y = Math.PI/8;
+    rail12.rotation.y = -Math.PI/8;
+    rail13.rotation.y = -Math.PI/4;
+    rail14.rotation.y = Math.PI/2 - (-Math.PI/8);
+    rail15.rotation.y = -Math.PI/2;
+    rail16.rotation.y = Math.PI/2 - (Math.PI/8);
+    rail17.rotation.y = Math.PI/4;
+    rail18.rotation.y = Math.PI/8;
+
+    All.add(rail1);
+    All.add(rail2);
+    All.add(rail3);
+    All.add(rail4);
+    All.add(rail5);
+    All.add(rail6);
+    All.add(rail7);
+    All.add(rail8);
+    All.add(rail9);
+    All.add(rail10);
+    All.add(rail11);
+    All.add(rail12);
+    All.add(rail13);
+    All.add(rail14);
+    All.add(rail15);
+    All.add(rail16);
+    All.add(rail17);
+    All.add(rail18);
+    All.add(rail19);
+    All.add(rail20);
+
+    return All;
+  }
+
+  function onWindowResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  }
+
+	function unitize (object, targetSize) {
+		// find bounding box of 'object'
+		var box3 = new THREE.Box3();
+		box3.setFromObject (object);
+		var size = new THREE.Vector3();
+		size.subVectors (box3.max, box3.min);
+		var center = new THREE.Vector3();
+		center.addVectors(box3.max, box3.min).multiplyScalar (0.5);
+		console.log ('center: ' + center.x + ', '+center.y + ', '+center.z );
+		console.log ('size: ' + size.x + ', ' +  size.y + ', '+size.z );
+		// uniform scaling according to objSize
+		var objSize = Math.max (size.x, size.y, size.z);
+		var scaleSet = targetSize/objSize;
+		var theObject =  new THREE.Object3D();
+		theObject.add (object);
+		object.scale.set (scaleSet, scaleSet, scaleSet);
+		object.position.set (-center.x*scaleSet, -center.y*scaleSet + size.y/2*scaleSet, -center.z*scaleSet);
+		theObject.rotation.y = Math.PI/2; // fix car direction
+		return theObject;
+	}
+
+
+</script>
+
+</body>
+</html>
