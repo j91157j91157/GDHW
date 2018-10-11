@@ -8,7 +8,7 @@
 
 :snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake:
 
-#### 下列為2018 Fall Game Programming 的 Homework by I3B49 (:four::one::zero::four::zero::six::two::four::nine:):
+#### 下列為2018 Fall Game Programming 的 Homework by I4B49 (:four::one::zero::four::zero::six::two::four::nine:):
 
 請點此連結進入 Homework 首頁！-----> [__我是傳送門__](https://j91157j91157.github.io/GDHW/index.html)
 
@@ -18,9 +18,15 @@ Homework 0 : JavaScript, three.js Basic
 
 :star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2:
 
-Homework 1 : ？？？
-   - **~~Homework 1 の 傳送門~~**
-     - This homework is undone！:no_entry:
+Homework 1 : Camera switch, Face3, D-drive
+   - [Homework 1 の 傳送門](https://j91157j91157.github.io/GDHW/Drive%20(HW1).html)
+     - This homework is finished！:white_check_mark:
+
+:star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2:
+
+Homework 2 : ？？？
+    - **~~Homework 2 の 傳送門~~**
+      - This homework is undone！:no_entry:
 
 :snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake:
 

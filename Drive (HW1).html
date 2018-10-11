@@ -1,19 +1,21 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>戰★痛★車</title>
+    <title>校門口前一堆三寶</title>
     <link rel="shortcut icon" href="http://i.imgur.com/jnjsKvZ.png">
 </head>
-
-<div id="info">press "WASD" to move chariot
-  <br/>press SPACE to switch camera
+<div id="info">
+  press "HOME" to start engune
+  <br/>press "WASD" to drive car
+  <br/>press "SPACE" to brake car
+  <br/>press button to switch camera<br/>
+  <button id="button" style="width:10%">Switch</button><br>
+  <label id="engine">Power：Off</label>
 <div>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/84/three.min.js"></script>
 <script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
 <script src="https://jyunming-chen.github.io/tutsplus/js/KeyboardState.js"></script>
 <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-
 
 <style>
 body {
@@ -42,11 +44,17 @@ var power, angle, clock;
 var pos = new THREE.Vector3();
 var vel = new THREE.Vector3();
 var force = new THREE.Vector3();
+var engine = false, whichCamera = 0;
 
 (function() {
 	Math.clamp = function(val,min,max){
 	return Math.min(Math.max(val,min),max);
 }})();
+
+$("#button").click(function() {
+  whichCamera = (whichCamera + 1) % 2
+  //this.whichCamera = this.whichCamera || 0;
+});
 
 init();
 animate();
@@ -71,7 +79,7 @@ function init() {
   clock = new THREE.Clock();
 
   let axes = new THREE.AxisHelper(200);
-  scene.add(axes);
+  //scene.add(axes);
 
   var gridXZ = new THREE.GridHelper(300, 40, 'red', 'white');//400 40
   //scene.add(gridXZ);
@@ -98,17 +106,17 @@ function init() {
 
   var sagiriMaterial = new THREE.MeshBasicMaterial({
       side: THREE.DoubleSide,
-      transparent: true, // key to cutout texture
+      transparent: true,
       map: loader.load('texture/HW1/sagiri.png')
   });
   var plateletMaterial = new THREE.MeshBasicMaterial({
       side: THREE.DoubleSide,
-      transparent: true, // key to cutout texture
+      transparent: true,
       map: loader.load('texture/HW1/platelet.png')
   });
   var saoMaterial = new THREE.MeshBasicMaterial({
       side: THREE.DoubleSide,
-      transparent: true, // key to cutout texture
+      transparent: true,
       map: loader.load('texture/HW1/sao.png')
   });
 
@@ -124,25 +132,8 @@ function init() {
   Car = build();
   scene.add(Car);
 
-  power = 0.1;
+  power = 0;
 	angle = 0;
-
-  //草地
-  /*var loader = new THREE.TextureLoader(); //84 texture 載入器
-  loader.setCrossOrigin ('');
-  var floorTexture = loader.load('texture/HW3/floor.jpg');
-  floorTexture.wrapS = THREE.RepeatWrapping;
-  floorTexture.wrapT = THREE.RepeatWrapping;
-  floorTexture.repeat.set(8, 8);
-  var floorMaterial = new THREE.MeshBasicMaterial({
-    map: floorTexture,
-    side: THREE.DoubleSide
-  });
-  var floorGeometry = new THREE.PlaneGeometry(1000, 1000, 1, 1);
-  var floor = new THREE.Mesh(floorGeometry, floorMaterial);
-
-  floor.rotation.x = Math.PI / 2;
-  scene.add(floor);*/
 }
 
 function onWindowResize() {
@@ -154,17 +145,29 @@ function onWindowResize() {
 }
 
 function animate() {
+  keyboard.update();
   var dt = clock.getDelta();
   if (vel.length() > 0) {
     angle = Math.atan2(-vel.z, vel.x); // update orientation
   }
-  var angle_thrust = angle;
-	if ( keyboard.down("A") || keyboard.pressed("A") ) angle_thrust += 0.25;
-	if ( keyboard.down("D") || keyboard.pressed("D") ) angle_thrust -= 0.25;
-	if ( keyboard.down("W") || keyboard.pressed("W") ) power *= 1.2;
-	if ( keyboard.down("S") || keyboard.pressed("S") ) power /= 1.2;
-	power = Math.clamp (power, -10, 60.0);
 
+  var angle_thrust = angle;
+  if(keyboard.down("home")) {
+    engine = !engine;
+    if(engine)
+      $("#engine").text("Power：On");
+    else
+      $("#engine").text("Power：Off");
+      power = 0.01;
+  }
+  if(engine){
+    if ( keyboard.down("A") || keyboard.pressed("A") ) angle_thrust += 0.25;
+    if ( keyboard.down("D") || keyboard.pressed("D") ) angle_thrust -= 0.25;
+    if ( keyboard.down("W") || keyboard.pressed("W") ) power *= 1.2;
+    if ( keyboard.down("S") || keyboard.pressed("S") ) power /= 1.2;
+    if ( keyboard.down("space") ) power = 0.01;
+  }
+	power = Math.clamp (power, -10, 60.0);
   var thrust = new THREE.Vector3(1,0,0).multiplyScalar(power).applyAxisAngle(new THREE.Vector3(0,1,0), angle_thrust);
   force.copy (thrust);
   force.add(vel.clone().multiplyScalar(-2));
@@ -178,11 +181,6 @@ function animate() {
   Sagiri.position.set(0, 12, 90);
   Platelet.position.set(70, 9.5, 0);
   Sao.position.set(-50, 16, -50);
-
-
-  this.whichCamera = this.whichCamera || 0;
-  keyboard.update();
-  if (keyboard.down("space")) whichCamera = (whichCamera + 1) % 2;
 
   //第三人稱
   var vectorcameraBase = Car.localToWorld(new THREE.Vector3(-15, 4, 0));
