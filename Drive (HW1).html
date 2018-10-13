@@ -96,7 +96,7 @@ function init() {
 	floorTexture.repeat.set(4, 4);
 	var floorMaterial = new THREE.MeshBasicMaterial({
 		map: floorTexture,
-		side: THREE.DoubleSide
+		side: THREE.BackSide
 	});
 	var floorGeometry = new THREE.PlaneGeometry(300, 300, 1, 1);
 	var floor = new THREE.Mesh(floorGeometry, floorMaterial);
@@ -105,17 +105,17 @@ function init() {
 	scene.add(floor);
 
   var sagiriMaterial = new THREE.MeshBasicMaterial({
-      side: THREE.DoubleSide,
+      side: THREE.FrontSide,
       transparent: true,
       map: loader.load('texture/HW1/sagiri.png')
   });
   var plateletMaterial = new THREE.MeshBasicMaterial({
-      side: THREE.DoubleSide,
+      side: THREE.FrontSide,
       transparent: true,
       map: loader.load('texture/HW1/platelet.png')
   });
   var saoMaterial = new THREE.MeshBasicMaterial({
-      side: THREE.DoubleSide,
+      side: THREE.FrontSide,
       transparent: true,
       map: loader.load('texture/HW1/sao.png')
   });
