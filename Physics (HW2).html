@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>∮ 莫札特の叮咚K.576 ∮</title>
+    <link rel="shortcut icon" href="http://i.imgur.com/jnjsKvZ.png">
+</head>
+<div id="info">
+    <button id="button" style="width:5%">Play</button>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/84/three.min.js"></script>
+<script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
+<script src='https://jyunming-chen.github.io/WebAudio/js/shared.js'></script>
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<audio id="soundtrack" loop style="display:none">
+    <source src="texture/HW2/Mozart K576 - III. Allegretto.mp3" type='audio/mp3'></audio>
+
+<style>
+#info {
+  position: absolute;
+  top: 0px;
+  width: 100%;
+  padding: 10px;
+  text-align: center;
+  color: #ffff00;
+}
+
+body {
+  overflow: hidden;
+}
+</style>
+
+<body>
+<script>
+class Ball {
+	constructor (mesh, rad = 2, color) {
+  	this.pos = new THREE.Vector3();
+    this.vel = new THREE.Vector3();
+    this.force = new THREE.Vector3();
+    this.mesh = mesh;
+    this.radius = rad;
+    this.light = new THREE.PointLight (color, 1, rad*4);
+    scene.add (this.light);
+    scene.add (this.mesh); // add to scene when particle is created
+		this.mesh.material.color.copy ( color.clone() );
+  }
+  update (dt) {
+		this.vel.add (this.force.clone().multiplyScalar (dt));
+  	this.pos.add (this.vel.clone().multiplyScalar(dt));
+
+		this.collidingPlanes (planes);
+
+		this.mesh.position.copy (this.pos);
+    this.light.position.copy (this.pos);
+    this.light.position.y = 20;
+  }
+	collidingPlanes (planes) {
+    const EPS = 1e-3;
+    const CR = 0.96; //衰減
+  	for (let i = 0; i < planes.length; i++) {
+			let plane = planes[i];
+			let point = this.pos.clone().sub (plane.ptOnPl)
+      if ( point.dot(plane.normal) < EPS + this.radius) {
+				// position correction
+      	this.pos.copy (plane.ptOnPl.clone().add (point.projectOnPlane(plane.normal)));
+        this.pos.add (plane.normal.clone().multiplyScalar(this.radius));
+      	// velocity update
+      	this.vel.sub (plane.normal.clone().multiplyScalar ((1+CR)*this.vel.dot(plane.normal)));
+      	//return;  // assume particle collides with AT MOST one plane
+        collisionSound(sound.wall, 0, 0.5); //放聲音
+      }
+  	}
+  }
+}
+
+class Plane {
+	constructor (localPointOnPlane, localNormal, mesh) {
+    this.localPtOnPl = localPointOnPlane.clone();
+		this.localNormal = localNormal.clone();
+    this.mesh = mesh;  // the graphics representation
+    scene.add (mesh);
+  }
+  update () {
+  	this.mesh.updateMatrixWorld(); // important!
+  	this.ptOnPl = this.mesh.localToWorld (this.localPtOnPl.clone());
+    let normalMat = new THREE.Matrix3().getNormalMatrix (this.mesh.matrixWorld);
+    this.normal = this.localNormal.clone().applyMatrix3 (normalMat).normalize();
+  }
+}
+
+///////////////////////////////////////////////////////////////////////
+$('#button').click ( function() {
+	isPlay = !isPlay;
+	if (isPlay) {
+    $('#button').text ('Pause');
+		soundTrack.play();
+	} else {
+    $('#button').text ('Play');
+    soundTrack.pause();
+	}
+});
+var camera, scene, renderer, light;
+var planes = [];
+var balls = [];
+var clock = new THREE.Clock();
+var radius = 15; //建議不要超過22
+var soundTrack, isPlay = false;
+var RhythmSample = function () {
+    loadSounds(this, {
+        wall: 'texture/HW2/cling_1.wav',
+        disk: 'texture/HW2/cling_2.wav'
+    });
+};
+var sound = new RhythmSample();
+
+init();
+animate();
+
+function init() {
+	soundTrack = document.getElementById ('soundtrack');
+
+  scene = new THREE.Scene();
+
+  camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 1000);
+  camera.position.y = 400;
+	camera.position.z = 450;
+
+  light = new THREE.PointLight(0xffffff);
+  light.position.set(100, 300, 200);
+  //scene.add(light);
+
+  var gridXZ = new THREE.GridHelper(200, 20, 'red', 'white');
+  //scene.add(gridXZ);
+
+  var cubeMap = loadCubemap();
+  scene.background = cubeMap;
+
+  var floorGeometry = new THREE.PlaneGeometry (400,400);
+  var floorMaterial = new THREE.MeshPhongMaterial({
+        color: 0xffffff,
+        emissive: 0x000000
+      });
+  var floor = new THREE.Mesh (floorGeometry, floorMaterial);
+  floor.rotation.x = -Math.PI/2;
+  scene.add (floor);
+
+  renderer = new THREE.WebGLRenderer();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setClearColor(0x888888);
+
+  let controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+  document.body.appendChild(renderer.domElement);
+  window.addEventListener('resize', onWindowResize, false);
+
+  //////////////////
+  buildDisk(radius);
+  buildWall();
+}
+
+function animate() {
+	balls.forEach (function(x) {x.update(0.1)});
+
+  var dt = clock.getDelta();
+  for(var i = 0; i < balls.length; i++) {
+    if(i > 0) {
+      for(var j = 0; j < i; j++) {
+        var dis = Math.sqrt( //圓心距離
+          (balls[j].pos.x - balls[i].pos.x) * (balls[j].pos.x - balls[i].pos.x) +
+          (balls[j].pos.z - balls[i].pos.z) * (balls[j].pos.z - balls[i].pos.z)
+        );
+        if(dis <= radius*2) {
+          collisionWithDisk(balls[i], balls[j], dis);
+          collisionSound(sound.disk, 0, 0.5); //放聲音
+        }
+      }
+    }
+  }
+  requestAnimationFrame(animate);
+  renderer.render(scene, camera);
+}
+
+function buildDisk(r){
+	let disk, ball;
+  let diskGeometry = new THREE.CylinderGeometry (r, r, r/2, 32);
+  //disk 1 左上
+  disk = new THREE.Mesh (diskGeometry, new THREE.MeshBasicMaterial());
+	ball = new Ball (disk, r, new THREE.Color("hsl(" + Math.random()*360 + ", 100%, 50%)"));
+  ball.vel.set (-50,0,-50);
+  ball.pos.set (-40,r/4,-40); //高度為r÷2再一半
+	balls.push (ball);
+  //disk 2 上
+  disk = new THREE.Mesh (diskGeometry, new THREE.MeshBasicMaterial());
+	ball = new Ball (disk, r, new THREE.Color("hsl(" + Math.random()*360 + ", 100%, 50%)"));
+  ball.vel.set (0,0,-50);
+  ball.pos.set (0,r/4,-40);
+	balls.push (ball);
+  //disk 3 右上
+  disk = new THREE.Mesh (diskGeometry, new THREE.MeshBasicMaterial());
+	ball = new Ball (disk, r, new THREE.Color("hsl(" + Math.random()*360 + ", 100%, 50%)"));
+  ball.vel.set (50,0,-50);
+  ball.pos.set (40,r/4,-40);
+	balls.push (ball);
+  //disk 4 左
+  disk = new THREE.Mesh (diskGeometry, new THREE.MeshBasicMaterial());
+	ball = new Ball (disk, r, new THREE.Color("hsl(" + Math.random()*360 + ", 100%, 50%)"));
+  ball.vel.set (-50,0,0);
+  ball.pos.set (-40,r/4,0);
+	balls.push (ball);
+  //disk 5 中
+  disk = new THREE.Mesh (diskGeometry, new THREE.MeshBasicMaterial());
+	ball = new Ball (disk, r, new THREE.Color("hsl(" + Math.random()*360 + ", 100%, 50%)"));
+  ball.vel.set (0,0,0);
+  ball.pos.set (0,r/4,0);
+	balls.push (ball);
+  //disk 6 右
+  disk = new THREE.Mesh (diskGeometry, new THREE.MeshBasicMaterial());
+	ball = new Ball (disk, r, new THREE.Color("hsl(" + Math.random()*360 + ", 100%, 50%)"));
+  ball.vel.set (50,0,0);
+  ball.pos.set (40,r/4,0);
+	balls.push (ball);
+  //disk 7 左下
+  disk = new THREE.Mesh (diskGeometry, new THREE.MeshBasicMaterial());
+	ball = new Ball (disk, r, new THREE.Color("hsl(" + Math.random()*360 + ", 100%, 50%)"));
+  ball.vel.set (-50,0,50);
+  ball.pos.set (-40,r/4,40);
+	balls.push (ball);
+  //disk 8 下
+  disk = new THREE.Mesh (diskGeometry, new THREE.MeshBasicMaterial());
+  ball = new Ball (disk, r, new THREE.Color("hsl(" + Math.random()*360 + ", 100%, 50%)"));
+  ball.vel.set (0,0,50);
+  ball.pos.set (0,r/4,40);
+  balls.push (ball);
+  //disk 9 右下
+  disk = new THREE.Mesh (diskGeometry, new THREE.MeshBasicMaterial());
+	ball = new Ball (disk, r, new THREE.Color("hsl(" + Math.random()*360 + ", 100%, 50%)"));
+  ball.vel.set (50,0,50);
+  ball.pos.set (40,r/4,40);
+	balls.push (ball);
+}
+
+function buildWall(){
+	let plane, wall;
+  let wallMaterial = new THREE.MeshPhongMaterial({
+    color: 0xffffff,
+    emissive: 0x000000
+  });
+  wall = new THREE.Mesh ( new THREE.BoxGeometry (400, 20, 10), wallMaterial);
+  scene.add (wall);
+  wall.position.set(0, 10, 195);
+	plane = new Plane (new THREE.Vector3(0,0,-5), new THREE.Vector3(0,0,-1), wall);
+  plane.update();
+  planes.push (plane);
+
+  wall = new THREE.Mesh ( new THREE.BoxGeometry (400, 20, 10), wallMaterial);
+  scene.add (wall);
+  wall.position.set(0, 10, -195);
+	plane = new Plane (new THREE.Vector3(0,0,5), new THREE.Vector3(0,0,1), wall);
+  plane.update();
+  planes.push (plane);
+
+  wall = new THREE.Mesh ( new THREE.BoxGeometry (10, 20, 380), wallMaterial);
+  scene.add (wall);
+  wall.position.set(195, 10, 0);
+	plane = new Plane (new THREE.Vector3(-5,0,0), new THREE.Vector3(-1,0,0), wall);
+  plane.update();
+  planes.push (plane);
+
+  wall = new THREE.Mesh ( new THREE.BoxGeometry (10, 20, 380), wallMaterial);
+  scene.add (wall);
+  wall.position.set(-195, 10, 0);
+	plane = new Plane (new THREE.Vector3(5,0,0), new THREE.Vector3(1,0,0), wall);
+  plane.update();
+  planes.push (plane);
+
+  let showcaseMaterial = new THREE.MeshPhongMaterial({
+    color: 0xffffff,
+    emissive: 0xffffff,
+    transparent: true,
+    opacity: 0.2
+  });
+  let showcase = new THREE.Mesh ( new THREE.BoxGeometry (400, 100, 400), showcaseMaterial);
+  showcase.position.y = 70;
+  scene.add (showcase);
+}
+
+function loadCubemap() {
+  var urls = [
+    'texture/HW2/posx.jpg', 'texture/HW2/negx.jpg',
+    'texture/HW2/posy.jpg', 'texture/HW2/negy.jpg',
+    'texture/HW2/posz.jpg', 'texture/HW2/negz.jpg'
+  ];
+  var loader = new THREE.CubeTextureLoader();
+  loader.setCrossOrigin('');
+  var cubeMap = loader.load(urls);
+  cubeMap.format = THREE.RGBFormat;
+  return cubeMap;
+}
+
+function collisionWithDisk(a, b, dis) {
+  if(a.pos.x < b.pos.x && a.pos.z < b.pos.z) {
+    a.pos.x -= 1; a.pos.z -= 1;
+    b.pos.x += 1; b.pos.z += 1;
+  }
+  else if(a.pos.x > b.pos.x && a.pos.z < b.pos.z) {
+    a.pos.x += 1; a.pos.z -= 1;
+    b.pos.x -= 1; b.pos.z += 1;
+  }
+  else if(a.pos.x > b.pos.x && a.pos.z > b.pos.z) {
+    a.pos.x += 1; a.pos.z += 1;
+    b.pos.x -= 1; b.pos.z -= 1;
+  }
+  else {
+    a.pos.x -= 1; a.pos.z += 1;
+    b.pos.x += 1; b.pos.z -= 1;
+  }
+
+  var tmpVel = a.vel.clone();
+  var tmpPos = a.pos.clone();
+  a.vel.sub(a.pos.clone().sub(b.pos).multiplyScalar(a.vel.clone().sub(b.vel).dot(a.pos.clone().sub(b.pos)) / (a.pos.clone().distanceToSquared(b.pos))));
+  b.vel.sub(b.pos.clone().sub(tmpPos).multiplyScalar(b.vel.clone().sub(tmpVel).dot(b.pos.clone().sub(tmpPos)) / (b.pos.clone().distanceToSquared(a.pos))));
+}
+
+function collisionSound(buffer, time, intensity) {
+    var gainNode = context.createGain();
+    var source = context.createBufferSource();
+    source.buffer = buffer;
+
+    // Connect source to a gain node
+    source.connect(gainNode);
+    // Connect gain node to destination
+    gainNode.connect(context.destination);
+
+    var gainval = intensity || 0.5; //聲音大小
+    gainNode.gain.value = gainval;
+
+    source[source.start ? 'start' : 'noteOn'](time);
+}
+
+function onWindowResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+}
+</script>
+</body>
+</html>

@@ -24,11 +24,15 @@ Homework 1 : Camera switch, Face3, D-drive
 
 :star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2:
 
-Homework 2 : ？？？
+Homework 2 : Game physics, Class, Web audio API
+   - [Homework 2 の 傳送門](https://j91157j91157.github.io/GDHW/Physics%20(HW2).html)
+     - This homework is finished！:white_check_mark:
 
-    - **~~Homework 2 の 傳送門~~**
-    
-      - This homework is undone！:no_entry:
+:star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2:
+
+Homework 3 : ？？？
+   - **~~Homework 3 の 傳送門~~**
+     - This homework is undone！:no_entry:
 
 :snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake:
 
