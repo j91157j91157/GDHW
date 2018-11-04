@@ -1,7 +1,10 @@
-
 <!DOCTYPE html>
 <html>
 <head>
+    <title>阿楞月球 Disco 漫步</title>
+    <link rel="shortcut icon" href="https://i.imgur.com/jnjsKvZ.png">
+</head>
+
 <style>
 	body {
 	  margin: 0px;
@@ -19,21 +22,33 @@
 	  color: #ffff00
 	}
 </style>
-</head>
 
 <body>
 <div id="info">
-  <audio id="soundtrack" autoplay loop style="display:none">
+	<button id="button" style="width:5%">Play</button>
+  <audio id="soundtrack" loop style="display:none">
       <source src="texture/HW3/backsound.mp3" type='audio/mp3'></audio>
 </div>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/84/three.min.js"></script>
 <script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.5.1/dat.gui.min.js"></script>
 <script src="https://threejs.org/examples/js/Gyroscope.js"></script>
 
 <script>
-var scene, renderer, camera;
+$('#button').click ( function() {
+	//Backsound
+  var soundTrack = document.getElementById ('soundtrack');
+	isPlay = !isPlay;
+	if (isPlay) {
+    $('#button').text ('Pause');
+		soundTrack.play();
+	} else {
+    $('#button').text ('Play');
+    soundTrack.pause();
+	}
+});
+var scene, renderer, camera, isPlay = false;
 var headX = 29.5, headY = 19, headZ = 20.6;
 var torsoX = 14.8, torsoY = 23.6, torsoZ = 14.8;
 var handX = 5, handY = 19, handZ = 5;
@@ -498,18 +513,14 @@ function init() {
   scene.add(gyro);
   gyro.add(camera);
   head.add(gyro);
-  //gyro.remove(camera)
-
-  //Backsound
-  var soundTrack = document.getElementById ('soundtrack');
-  soundTrack.play();
+  //gyro.remove(camera);
 
   // create the video element
 	video = document.createElement( 'video' );
 	video.src = "texture/HW3/background.mp4";
 	video.load(); // must call after setting/changing source
-  //video.muted = true;
-  video.loop = true;
+  video.muted = true; //Google Chrome 針對自動播放聲音的網頁一律禁止...
+  video.loop = true;  //解決方式是必須要遷入關閉靜音的buttom才能發出聲音。
 	video.play();
 
 	videoImage = document.createElement( 'canvas' );
@@ -524,7 +535,7 @@ function init() {
 	videoTexture.minFilter = THREE.LinearFilter;
 	videoTexture.magFilter = THREE.LinearFilter;
 
-	var movieMaterial = new THREE.MeshBasicMaterial( { map: videoTexture, overdraw: true, side:THREE.DoubleSide } );
+	var movieMaterial = new THREE.MeshBasicMaterial( { map: videoTexture, overdraw: true, side:THREE.FrontSide } );
 	var movieGeometry = new THREE.PlaneGeometry( 200, 113, 4, 4 );
 	var movieScreen = new THREE.Mesh( movieGeometry, movieMaterial );
 	movieScreen.position.set(0,56.5,-100);
@@ -584,12 +595,12 @@ function makeHead(){
   var loader = new THREE.TextureLoader();
 	loader.setCrossOrigin ('');
 	var materials = [];
-  materials.push(new THREE.MeshLambertMaterial({map:loader.load('https://mdes4214.github.io/2016CGhw/images/hw2/head2.JPG'), side:THREE.DoubleSide}));
-  materials.push(new THREE.MeshLambertMaterial({map:loader.load('https://mdes4214.github.io/2016CGhw/images/hw2/head4.JPG'), side:THREE.DoubleSide}));
-  materials.push(new THREE.MeshLambertMaterial({map:loader.load('https://mdes4214.github.io/2016CGhw/images/hw2/head3.JPG'), side:THREE.DoubleSide}));
+  materials.push(new THREE.MeshLambertMaterial({map:loader.load('texture/HW3/head2.jpg'), side:THREE.DoubleSide}));
+  materials.push(new THREE.MeshLambertMaterial({map:loader.load('texture/HW3/head4.jpg'), side:THREE.DoubleSide}));
+  materials.push(new THREE.MeshLambertMaterial({map:loader.load('texture/HW3/head3.jpg'), side:THREE.DoubleSide}));
   materials.push(new THREE.MeshLambertMaterial({visible:false}));
-  materials.push(new THREE.MeshLambertMaterial({map:loader.load('https://mdes4214.github.io/2016CGhw/images/hw2/head1.JPG'), side:THREE.DoubleSide}));
-  materials.push(new THREE.MeshLambertMaterial({map:loader.load('https://mdes4214.github.io/2016CGhw/images/hw2/head5.JPG'), side:THREE.DoubleSide}));
+  materials.push(new THREE.MeshLambertMaterial({map:loader.load('texture/HW3/head1.jpg'), side:THREE.DoubleSide}));
+  materials.push(new THREE.MeshLambertMaterial({map:loader.load('texture/HW3/head5.jpg'), side:THREE.DoubleSide}));
 
   var box = new THREE.Mesh(new THREE.BoxGeometry(headX, headY, headZ), new THREE.MultiMaterial(materials));
   var headFrame = new THREE.Object3D();
@@ -602,12 +613,12 @@ function makeTorso(){
   var loader = new THREE.TextureLoader();
 	loader.setCrossOrigin ('');
   var materials = [];
-  materials.push(new THREE.MeshLambertMaterial({color:0xC0A47C, side:THREE.DoubleSide}));
-  materials.push(new THREE.MeshLambertMaterial({color:0xC0A47C, side:THREE.DoubleSide}));
-  materials.push(new THREE.MeshLambertMaterial({color:0xC0A47C, side:THREE.DoubleSide}));
+  materials.push(new THREE.MeshLambertMaterial({color:0xC0A47C, side:THREE.FrontSide}));
+  materials.push(new THREE.MeshLambertMaterial({color:0xC0A47C, side:THREE.FrontSide}));
+  materials.push(new THREE.MeshLambertMaterial({color:0xC0A47C, side:THREE.FrontSide}));
   materials.push(new THREE.MeshLambertMaterial({visible:false}));
-  materials.push(new THREE.MeshLambertMaterial({map:loader.load('https://mdes4214.github.io/2016CGhw/images/hw2/body1.JPG'), side:THREE.DoubleSide}));
-  materials.push(new THREE.MeshLambertMaterial({map:loader.load('https://mdes4214.github.io/2016CGhw/images/hw2/body2.JPG'), side:THREE.DoubleSide}));
+  materials.push(new THREE.MeshLambertMaterial({map:loader.load('texture/HW3/body1.jpg'), side:THREE.FrontSide}));
+  materials.push(new THREE.MeshLambertMaterial({map:loader.load('texture/HW3/body2.jpg'), side:THREE.FrontSide}));
 
   var box = new THREE.Mesh(new THREE.BoxGeometry(torsoX, torsoY, torsoZ), new THREE.MultiMaterial(materials));
 
@@ -650,7 +661,7 @@ function makeTorso(){
   return torsoFrame;
 }
 function makeHand(){
-  var box = new THREE.Mesh(new THREE.BoxGeometry(handX, handY, handZ), new THREE.MeshLambertMaterial({color:0xC0A47C, side:THREE.DoubleSide}));
+  var box = new THREE.Mesh(new THREE.BoxGeometry(handX, handY, handZ), new THREE.MeshLambertMaterial({color:0xC0A47C, side:THREE.FrontSide}));
   var handFrame = new THREE.Object3D();
   handFrame.add(box);
   box.position.y = -handY/2;
@@ -658,7 +669,7 @@ function makeHand(){
   return handFrame;
 }
 function makeLeg(){
-  var box = new THREE.Mesh(new THREE.BoxGeometry(legX, legY, legZ), new THREE.MeshLambertMaterial({color:0xC0A47C, side:THREE.DoubleSide}));
+  var box = new THREE.Mesh(new THREE.BoxGeometry(legX, legY, legZ), new THREE.MeshLambertMaterial({color:0xC0A47C, side:THREE.FrontSide}));
   var legFrame = new THREE.Object3D();
   legFrame.add(box);
   box.position.y = -legY/2;
@@ -1115,12 +1126,6 @@ function keyframe(t) {
 }
 
 function animate() {
-  if ( video.readyState === video.HAVE_ENOUGH_DATA )
-  {
-    videoImageContext.drawImage( video, 0, 0 );
-    if ( videoTexture )
-      videoTexture.needsUpdate = true;
-  }
   keyframe (clock.getElapsedTime())
   requestAnimationFrame(animate);
   render();
@@ -1186,6 +1191,13 @@ function render() {
   danboard.position.x = intKey[25];
   danboard.position.y = intKey[26];
   danboard.position.z = intKey[27];
+
+	if ( video.readyState === video.HAVE_ENOUGH_DATA )
+  {
+    videoImageContext.drawImage( video, 0, 0 );
+    if ( videoTexture )
+      videoTexture.needsUpdate = true;
+  }
 
   renderer.render(scene, camera);
 }

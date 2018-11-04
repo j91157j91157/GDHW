@@ -1,6 +1,6 @@
 ## 歡迎來到 j91157j91157 的Github！
 
-#### Computer Graphic Fall 2018 By I5780
+#### Game Design Programming Fall 2018 By I5780
 **E-mail： j91157j91157@gmail.com**
 
 **這位是看板娘** ------->
@@ -30,8 +30,14 @@ Homework 2 : Game physics, Class, Web audio API
 
 :star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2:
 
-Homework 3 : ？？？
-   - **~~Homework 3 の 傳送門~~**
+Homework 3 : Two-link Object3D, Dat-GUI, Gyroscope
+   - [Homework 3 の 傳送門](https://j91157j91157.github.io/GDHW/Keyframe%20(HW3).html)
+     - This homework is finished！:white_check_mark:
+
+:star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2:
+
+Homework 4 : ？？？
+   - **~~Homework 4 の 傳送門~~**
      - This homework is undone！:no_entry:
 
 :snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake:
