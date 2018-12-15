@@ -42,8 +42,14 @@ Homework 4 : Extrude Geometry, Forward & Inverse Kinematics
 
 :star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2:
 
-Homework 5 : ？？？
-   - **~~Homework 5 の 傳送門~~**
+Homework 5 : MD2, Gyroscope
+   - [Homework 5 の 傳送門](https://j91157j91157.github.io/GDHW/MD2%20(HW5).html)
+     - This homework is finished！:white_check_mark:
+
+:star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2:
+
+Homework 6 : ？？？
+   - **~~Homework 6 の 傳送門~~**
      - This homework is undone！:no_entry:
 
 :snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake:
@@ -61,9 +67,9 @@ Homework 5 : ？？？
 
 <script src="https://jyunming-chen.github.io/tutsplus/js/KeyboardState.js"></script> //KeyboardState
 
-<script src="https://rawgit.com/mrdoob/three.js/master/examples/js/loaders/MTLLoader.js"></script> //MTL Loader
+<script src="https://threejs.org/examples/js/loaders/MTLLoader.js"></script> //MTL Loader
 
-<script src="https://rawgit.com/mrdoob/three.js/master/examples/js/loaders/OBJLoader.js"></script> //OBJ Loader
+<script src="https://threejs.org/examples/js/loaders/OBJLoader.js"></script> //OBJ Loader
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js"></script> //FPS
 ```

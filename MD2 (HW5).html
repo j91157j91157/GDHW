@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>▁▂▃天線寶寶說你好▃▂▁</title>
+		<style>
+			body {
+				margin: 0px;
+				overflow: hidden;
+			}
+
+			#info {
+				position: absolute;
+				top: 0px;
+				width: 100%;
+				padding: 10px;
+				text-align: center;
+				color: #ffffff
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="info">
+		  Press WASD or ↑←↓→ to control laa-laa<br>
+			Press SPACE to jump
+			<audio id="bombSound" style="display:none">
+		      <source src="texture/HW5/bombSound.mp3" type='audio/mp3'></audio>
+			<audio id="jumpSound" style="display:none">
+					<source src="texture/HW5/jumpSound.mp3" type='audio/mp3'></audio>
+			<audio id="backgroundMusic" loop style="display:none">
+					<source src="texture/HW5/backgroundMusic.mp3" type='audio/mp3'></audio>
+		<div>
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/88/three.min.js"></script>
+		<script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
+		<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+		<script src="https://threejs.org/examples/js/loaders/MTLLoader.js"></script>
+		<script src="https://threejs.org/examples/js/loaders/OBJLoader.js"></script>
+
+		<script src='js/MD2Loader.js'></script>
+		<script src='js/MorphBlendMesh.js'></script>
+		<script src='js/MD2CharacterComplex.js'></script>
+		<script src='js/Gyroscope.js'></script>
+
+		<script>
+			var SCREEN_WIDTH = window.innerWidth;
+			var SCREEN_HEIGHT = window.innerHeight;
+
+			var container;
+			var camera, scene, renderer;
+
+			var laalaa;
+			var light;
+
+			var cameraControls;
+
+			var controls = {
+				moveForward: false,
+				moveBackward: false,
+				moveLeft: false,
+				moveRight: false
+			};
+
+			var clock = new THREE.Clock();
+			var bomb = new THREE.Object3D();
+			var bombSound, jumpSound, backgroundMusic;
+			var BGMflag = false;
+
+			init();
+			animate();
+
+			function init() {
+
+				container = document.createElement( 'div' );
+				document.body.appendChild( container );
+
+				// CAMERA
+
+				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 6000 );
+				camera.position.set( 0, 150, 1300 );
+
+				// SCENE
+
+				scene = new THREE.Scene();
+				scene.background = new THREE.Color( 0x000000 );
+				scene.fog = new THREE.Fog( 0x000000, 1000, 6000 );
+
+				scene.add( camera );
+
+				// LIGHTS
+
+				scene.add( new THREE.AmbientLight( 0x222222 ) );
+
+				light = new THREE.DirectionalLight( 0xffffff, 2.25 );
+				light.position.set( 400, 1400, 1000 );
+
+				light.castShadow = true;
+
+				light.shadow.mapSize.width = 1024;
+				light.shadow.mapSize.height = 1024;
+
+				light.shadow.camera.near = 100;
+				light.shadow.camera.far = 4000;
+
+				light.shadow.camera.left = -1500;
+				light.shadow.camera.right = 1500;
+				light.shadow.camera.top = 1500;
+				light.shadow.camera.bottom = -1500;
+
+				scene.add( light );
+				//scene.add( new THREE.CameraHelper( light.shadow.camera ) );
+
+				//  GROUND
+				var loader = new THREE.TextureLoader();
+				loader.setCrossOrigin ('');
+				var gt = loader.load( "texture/HW5/wood.jpg" );
+				var gg = new THREE.PlaneBufferGeometry( 16000, 16000 );
+				var gm = new THREE.MeshPhongMaterial( { color: 0xffffff, map: gt } );
+
+				var ground = new THREE.Mesh( gg, gm );
+				ground.rotation.x = - Math.PI / 2;
+				ground.material.map.repeat.set( 64, 64 );
+				ground.material.map.wrapS = THREE.RepeatWrapping;
+				ground.material.map.wrapT = THREE.RepeatWrapping;
+				// note that because the ground does not cast a shadow, .castShadow is left false
+				ground.receiveShadow = true;
+
+				scene.add( ground );
+
+				var boxMaterial = loader.load( "texture/HW5/box_wood.jpg" );
+
+				let box1 = new THREE.Mesh( new THREE.BoxGeometry( 200, 30, 200 ), new THREE.MeshLambertMaterial( {map: boxMaterial } ));
+				box1.castShadow = true;
+				box1.receiveShadow = true;
+				let box2 = box1.clone();
+				let box3 = box1.clone();
+				let box4 = box1.clone();
+				let box5 = box1.clone();
+				let box6 = box1.clone();
+				let box7 = box1.clone();
+				let box8 = box1.clone();
+				let box9 = box1.clone();
+				let box10 = box1.clone();
+				let box11 = box1.clone();
+				let box12 = box1.clone();
+				let box13 = box1.clone();
+				let box14 = box1.clone();
+				let box15 = box1.clone();
+				let box16 = box1.clone();
+				let box17 = box1.clone();
+				let box18 = box1.clone();
+				let box19 = box1.clone();
+				let box20 = box1.clone();
+				let box21 = box1.clone();
+				let box22 = box1.clone();
+				let box23 = box1.clone();
+				let box24 = box1.clone();
+				let box25 = box1.clone();
+				let box26 = box1.clone();
+				let box27 = box1.clone();
+				let box28 = box1.clone();
+				let box29 = box1.clone();
+				let box30 = box1.clone();
+
+				box1.position.set(100, 15, 100);
+				box2.position.set(300, 45, 100);
+				box3.position.set(300, 75, 300);
+				box4.position.set(300, 105, 500);
+				box5.position.set(300, 135, 700);
+				box6.position.set(500, 165, 700);
+				box7.position.set(700, 195, 700);
+				box8.position.set(700, 225, 500);
+				box9.position.set(700, 255, 300);
+				box10.position.set(700, 285, 100);
+				box11.position.set(700, 315, -100);
+				box12.position.set(700, 345, -300);
+				box13.position.set(700, 375, -500);
+				box14.position.set(700, 405, -700);
+				box15.position.set(500, 435, -700);
+				box16.position.set(300, 465, -700);
+				box17.position.set(300, 495, -500);
+				box18.position.set(100, 525, -500);
+				box19.position.set(100, 555, -300);
+				box20.position.set(-100,585, -300);
+				box21.position.set(-300,615, -300);
+				box22.position.set(-300, 645, -100);
+				box23.position.set(-500, 675, -100);
+				box24.position.set(-700, 705, -100);
+				box25.position.set(-700, 735, 100);
+				box26.position.set(-700, 765, 300);
+				box27.position.set(-500, 795, 300);
+				box28.position.set(-300, 825, 300);
+				box29.position.set(-100, 855, 300);
+				box30.position.set(-100, 915, 75);
+
+				scene.add (box1);
+				scene.add (box2);
+				scene.add (box3);
+				scene.add (box4);
+				scene.add (box5);
+				scene.add (box6);
+				scene.add (box7);
+				scene.add (box8);
+				scene.add (box9);
+				scene.add (box10);
+				scene.add (box11);
+				scene.add (box12);
+				scene.add (box13);
+				scene.add (box14);
+				scene.add (box15);
+				scene.add (box16);
+				scene.add (box17);
+				scene.add (box18);
+				scene.add (box19);
+				scene.add (box20);
+				scene.add (box21);
+				scene.add (box22);
+				scene.add (box23);
+				scene.add (box24);
+				scene.add (box25);
+				scene.add (box26);
+				scene.add (box27);
+				scene.add (box28);
+				scene.add (box29);
+				scene.add (box30);
+
+				// BOMB
+				var onProgress = function(xhr) {
+					if (xhr.lengthComputable) {
+						var percentComplete = xhr.loaded / xhr.total * 100;
+						console.log(Math.round(percentComplete, 2) + '% downloaded');
+					}
+				};
+				var onError = function(xhr) {};
+				var mtlLoader = new THREE.MTLLoader();
+				mtlLoader.setPath('model/HW5/');
+				mtlLoader.load('bomb.mtl', function(materials) {
+					materials.preload();
+					var objLoader = new THREE.OBJLoader();
+					objLoader.setMaterials(materials);
+					objLoader.setPath('model/HW5/');
+					objLoader.load('bomb.obj', function(object) {
+						bomb.visible = true;
+						bomb.add(unitize (object, 100));
+						bomb.position.set(-100, 930, 75);
+						bomb.traverse (
+		         function (mesh) {
+		            if (mesh instanceof THREE.Mesh) {
+		              mesh.castShadow = true;
+									mesh.receiveShadow = true;
+		            }
+		          }
+		        );
+						scene.add(bomb);
+
+						object.traverse (
+							function(mesh) {
+								if (mesh instanceof THREE.Mesh) {
+									mesh.material.side = THREE.DoubleSide;
+								}
+						});
+					}, onProgress, onError);
+				});
+
+				// RENDERER
+
+				renderer = new THREE.WebGLRenderer( { antialias: true } );
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( SCREEN_WIDTH, SCREEN_HEIGHT );
+				container.appendChild( renderer.domElement );
+
+				renderer.gammaInput = true;
+				renderer.gammaOutput = true;
+
+				renderer.shadowMap.enabled = true;
+				renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+
+				// EVENTS
+
+				window.addEventListener( 'resize', onWindowResize, false );
+				document.addEventListener( 'keydown', onKeyDown, false );
+				document.addEventListener( 'keyup', onKeyUp, false );
+				bombSound = document.getElementById ('bombSound');
+				jumpSound = document.getElementById ('jumpSound');
+				backgroundMusic = document.getElementById ('backgroundMusic');
+
+
+				// CONTROLS
+
+				cameraControls = new THREE.OrbitControls( camera, renderer.domElement );
+				cameraControls.target.set( 0, 50, 0 );
+				cameraControls.update();
+
+				// CHARACTER
+
+				var configLaalaa = {
+
+					baseUrl: "md2models/laalaa/",
+
+					body: "laalaa.md2",
+					skins: [ "laalaa.png" ],
+					weapons:  [  ],
+
+					animations: {
+						move: "run",
+						idle: "stand",
+						jump: "jump",
+						crouchIdle: "deatha"
+					},
+
+					walkSpeed: 350, //translation speed
+					crouchSpeed: 175
+
+				};
+
+				laalaa = new THREE.MD2CharacterComplex();
+				laalaa.scale = 5;
+				laalaa.controls = controls;
+
+				laalaa.onLoadComplete = function () {
+
+					// cast and receive shadows
+					laalaa.enableShadows( true );
+
+					laalaa.setWeapon( 0 );
+					laalaa.setSkin( 0 );
+
+					laalaa.root.position.x = 0;
+					laalaa.root.position.z = 0;
+
+					scene.add( laalaa.root );
+
+					//light.target = laalaa.root;
+
+					var gyro = new THREE.Gyroscope();
+					gyro.add( camera );
+					//gyro.add( light, light.target );
+					laalaa.root.add( gyro );
+
+				}
+				laalaa.loadParts( configLaalaa );
+
+			}
+
+			// EVENT HANDLERS
+
+			function onWindowResize( event ) {
+
+				SCREEN_WIDTH = window.innerWidth;
+				SCREEN_HEIGHT = window.innerHeight;
+
+				renderer.setSize( SCREEN_WIDTH, SCREEN_HEIGHT );
+
+				camera.aspect = SCREEN_WIDTH/ SCREEN_HEIGHT;
+				camera.updateProjectionMatrix();
+
+			}
+
+			function onKeyDown ( event ) {
+
+				event.stopPropagation();
+
+				switch( event.keyCode ) {
+
+					case 38: /*up*/
+					case 87: /*W*/ 	controls.moveForward = true; break;
+
+					case 40: /*down*/
+					case 83: /*S*/ 	 controls.moveBackward = true; break;
+
+					case 37: /*left*/
+					case 65: /*A*/   controls.moveLeft = true; break;
+
+					case 39: /*right*/
+					case 68: /*D*/    controls.moveRight = true; break;
+
+					case 32: /*space*/ controls.jump = true; break;
+
+				}
+
+			}
+
+			function onKeyUp ( event ) {
+
+				event.stopPropagation();
+
+				switch( event.keyCode ) {
+
+					case 38: /*up*/
+					case 87: /*W*/ controls.moveForward = false; break;
+
+					case 40: /*down*/
+					case 83: /*S*/ 	 controls.moveBackward = false; break;
+
+					case 37: /*left*/
+					case 65: /*A*/ 	 controls.moveLeft = false; break;
+
+					case 39: /*right*/
+					case 68: /*D*/ 	  controls.moveRight = false; break;
+
+					case 32: /*space*/ controls.jump = false; break;
+				}
+			}
+
+			//平台處理
+			var y = 0;
+			var step1, step2, step3, step4, step5, step6, step7, step8, step9, step10,
+		      step11, step12, step13, step14, step15, step16, step17, step18, step19, step20,
+		      step21, step22, step23, step24, step25, step26, step27, step28, step29, step30;
+			function groundLevel(x, z) {
+				if(Math.abs(x - 100) < 100 && Math.abs(z - 100) < 100){
+					y = heightY + 15 + 15 ;
+					step1 = true;
+					return y;
+				}
+				else if(Math.abs(x - 300) < 100 && Math.abs(z - 100) < 100 && step1){
+					y = heightY + 15 + 45;
+					step2 = true;
+					return y;
+				}
+				else if(Math.abs(x - 300) < 100 && Math.abs(z - 300) < 100 && step2){
+					y = heightY + 15 + 75;
+					step3 = true;
+					return y;
+				}
+		    else if(Math.abs(x - 300) < 100 && Math.abs(z - 500) < 100 && step3){
+					y = heightY + 15 + 105;
+					step4 = true;
+					return y;
+				}
+				else if(Math.abs(x - 300) < 100 && Math.abs(z - 700) < 100 && step4){
+					y = heightY + 15 + 135;
+					step5 = true;
+					return y;
+				}
+		    else if(Math.abs(x - 500) < 100 && Math.abs(z - 700) < 100 && step5){
+					y = heightY + 15 + 165;
+					step6 = true;
+					return y;
+				}
+				else if(Math.abs(x - 700) < 100 && Math.abs(z - 700) < 100 && step6){
+					y = heightY + 15 + 195;
+					step7 = true;
+					return y;
+				}
+		    else if(Math.abs(x - 700) < 100 && Math.abs(z - 500) < 100 && step7){
+					y = heightY + 15 + 225;
+					step8 = true;
+					return y;
+				}
+				else if(Math.abs(x - 700) < 100 && Math.abs(z - 300) < 100 && step8){
+					y = heightY + 15 + 255;
+					step9 = true;
+					return y;
+				}
+		    else if(Math.abs(x - 700) < 100 && Math.abs(z - 100) < 100 && step9){
+					y = heightY + 15 + 285;
+					step10 = true;
+					return y;
+				}
+				else if(Math.abs(x - 700) < 100 && Math.abs(z + 100) < 100 && step10){
+					y = heightY + 15 + 315;
+					step11 = true;
+					return y;
+				}
+		    else if(Math.abs(x - 700) < 100 && Math.abs(z + 300) < 100 && step11){
+					y = heightY + 15 + 345;
+					step12 = true;
+					return y;
+				}
+				else if(Math.abs(x - 700) < 100 && Math.abs(z + 500) < 100 && step12){
+					y = heightY + 15 + 375;
+					step13 = true;
+					return y;
+				}
+		    else if(Math.abs(x - 700) < 100 && Math.abs(z + 700) < 100 && step13){
+					y = heightY + 15 + 405;
+					step14 = true;
+					return y;
+				}
+				else if(Math.abs(x - 500) < 100 && Math.abs(z + 700) < 100 && step14){
+					y = heightY + 15 + 435;
+					step15 = true;
+					return y;
+				}
+		    else if(Math.abs(x - 300) < 100 && Math.abs(z + 700) < 100 && step15){
+					y = heightY + 15 + 465;
+					step16 = true;
+					return y;
+				}
+				else if(Math.abs(x - 300) < 100 && Math.abs(z + 500) < 100 && step16){
+					y = heightY + 15 + 495;
+					step17 = true;
+					return y;
+				}
+		    else if(Math.abs(x - 100) < 100 && Math.abs(z + 500) < 100 && step17){
+					y = heightY + 15 + 525;
+					step18 = true;
+					return y;
+				}
+				else if(Math.abs(x - 100) < 100 && Math.abs(z + 300) < 100 && step18){
+					y = heightY + 15 + 555;
+					step19 = true;
+					return y;
+				}
+		    else if(Math.abs(x + 100) < 100 && Math.abs(z + 300) < 100 && step19){
+					y = heightY + 15 + 585;
+					step20 = true;
+					return y;
+				}
+				else if(Math.abs(x + 300) < 100 && Math.abs(z + 300) < 100 && step20){
+					y = heightY + 15 + 615;
+					step21 = true;
+					return y;
+				}
+		    else if(Math.abs(x + 300) < 100 && Math.abs(z + 100) < 100 && step21){
+					y = heightY + 15 + 645;
+					step22 = true;
+					return y;
+				}
+				else if(Math.abs(x + 500) < 100 && Math.abs(z + 100) < 100 && step22){
+					y = heightY + 15 + 675;
+					step23 = true;
+					return y;
+				}
+		    else if(Math.abs(x + 700) < 100 && Math.abs(z + 100) < 100 && step23){
+					y = heightY + 15 + 705;
+					step24 = true;
+					return y;
+				}
+				else if(Math.abs(x + 700) < 100 && Math.abs(z - 100) < 100 && step24){
+					y = heightY + 15 + 735;
+					step25 = true;
+					return y;
+				}
+		    else if(Math.abs(x + 700) < 100 && Math.abs(z - 300) < 100 && step25){
+					y = heightY + 15 + 765;
+					step26 = true;
+					return y;
+				}
+				else if(Math.abs(x + 500) < 100 && Math.abs(z - 300) < 100 && step26){
+					y = heightY + 15 + 795;
+					step27 = true;
+					return y;
+				}
+		    else if(Math.abs(x + 300) < 100 && Math.abs(z - 300) < 100 && step27){
+					y = heightY + 15 + 825;
+					step28 = true;
+					return y;
+				}
+				else if(Math.abs(x + 100) < 100 && Math.abs(z - 300) < 100 && step28){
+					y = heightY + 15 + 855;
+					step29 = true;
+					return y;
+				}
+		    else if((Math.abs(x + 100) < 100 && Math.abs(z - 75) < 100 && step29) || Math.abs(x + 100) < 100 && Math.abs(z - 75) < 200  && step29 && controls.jump){
+					y = heightY + 15 + 915;
+					step30 = true;
+					return y;
+				}
+				else{
+					step1 = false;
+					step2 = false;
+					step3 = false;
+		      step4 = false;
+					step5 = false;
+					step6 = false;
+		      step7 = false;
+					step8 = false;
+					step9 = false;
+		      step10 = false;
+		      step11 = false;
+					step12 = false;
+					step13 = false;
+		      step14 = false;
+					step15 = false;
+					step16 = false;
+		      step17 = false;
+					step18 = false;
+					step19 = false;
+		      step20 = false;
+		      step21 = false;
+					step22 = false;
+					step23 = false;
+		      step24 = false;
+					step25 = false;
+					step26 = false;
+		      step27 = false;
+					step28 = false;
+					step29 = false;
+		      step30 = false;
+					return heightY;
+				}
+			}
+
+			function getBomb(x, y, z){//-100, 980, 75
+				if(x != 0 && z != 0 && !BGMflag) {
+					backgroundMusic.play();
+					BGMflag = true;
+				}
+				if(y == heightY + 15 + 915 && bomb != undefined){
+					if(x < -50 && x > -150 && z < 125 && z > 25){
+						controls.crouch = true;
+						if(bomb.visible && BGMflag){
+							bombSound.play();
+							backgroundMusic.pause();
+						}
+						bomb.visible = false;
+					}
+				}
+				else controls.crouch = false;
+			}
+
+			function unitize (object, targetSize) {
+				// find bounding box of 'object'
+				var box3 = new THREE.Box3();
+				box3.setFromObject (object);
+				var size = new THREE.Vector3();
+				size.subVectors (box3.max, box3.min);
+				var center = new THREE.Vector3();
+				center.addVectors(box3.max, box3.min).multiplyScalar (0.5);
+				console.log ('center: ' + center.x + ', '+center.y + ', '+center.z );
+				console.log ('size: ' + size.x + ', ' +  size.y + ', '+size.z );
+				// uniform scaling according to objSize
+				var objSize = Math.max (size.x, size.y, size.z);
+				var scaleSet = targetSize/objSize;
+				var theObject =  new THREE.Object3D();
+				theObject.add (object);
+				object.scale.set (scaleSet, scaleSet, scaleSet);
+				object.position.set (-center.x*scaleSet, -center.y*scaleSet + size.y/2*scaleSet, -center.z*scaleSet);
+				theObject.rotation.y = Math.PI/2; // fix car direction
+				return theObject;
+			}
+
+			function animate() {
+				var delta = clock.getDelta();
+				if (laalaa) laalaa.update (delta);
+				if(controls.jump)jumpSound.play();
+
+				requestAnimationFrame( animate );
+				renderer.render( scene, camera );
+			}
+		</script>
+	</body>
+</html>
