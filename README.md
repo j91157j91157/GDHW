@@ -48,9 +48,15 @@ Homework 5 : MD2, Gyroscope
 
 :star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2:
 
-Homework 6 : ？？？
-   - **~~Homework 6 の 傳送門~~**
-     - This homework is undone！:no_entry:
+Homework 6 : Agent, Target, Obstacle, Collision Avoidance
+   - [Homework 6 の 傳送門](https://j91157j91157.github.io/GDHW/Steer%20(HW6).html)
+     - This homework is finished！:white_check_mark:
+
+:star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2::star2:
+
+Homework 7 : ？？？
+  - **~~Homework 7 の 傳送門~~**
+    - This homework is undone！:no_entry:
 
 :snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake::snowflake:
 

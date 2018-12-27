@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>開特斯拉跑車的老司機</title>
+  <link rel="shortcut icon" href="https://i.imgur.com/jnjsKvZ.png">
+</head>
+
+<style>
+#info {
+  position: absolute;
+  top: 0px;
+  width: 100%;
+  padding: 10px;
+  text-align: center;
+  color: #ffff00;
+}
+
+body {
+  margin: 0px;
+  overflow: hidden;
+}
+</style>
+
+<body>
+<div id="info">Agent (Seek, Arrival, Collision)<br>
+  <p id="message"></p><br>
+  經過時間 <span id="timer">0 : 0<span>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/84/three.min.js"></script>
+<script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<script src="js/HW6/agent.js"></script>
+<script src="js/HW6/obstacle.js"></script>
+<script src="js/HW6/target.js"></script>
+
+<!-- must be before main.js -->
+<script src="js/HW6/scene.js"></script>
+<script src="js/HW6/threemain.js"></script>
+
+<script src="js/HW6/main.js"></script>
+
+<script>
+    var min = 0;
+    var sec = 1;
+    var refreshInterval = setInterval(function(){
+    		var a = new Date();
+        document.getElementById("timer").innerHTML = min +" : " + sec ;
+        sec++;
+        if(sec == 60){
+            min++;
+            sec = 0;
+            if (min == 60) min = 0;
+        }
+    },1000);
+</script>
+</body>
+</html>
