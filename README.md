@@ -67,6 +67,8 @@ Homework 7 : ？？？
 
 <script src="https://threejs.org/build/three.js"></script> //Newest Three.js version
 
+<script src="https://threejs.org/build/three.min.js"></script> //Newest Three.js simplify version
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/84/three.min.js"></script> //Three.js R84
 
 <script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script> //OrbitControls
